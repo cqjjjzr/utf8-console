@@ -4,6 +4,8 @@ Utilities for handling UTF-8 reading/writing in console.
 
 Current this library has two components: one tool to properly handle display width of UTF-8 strings and a UTF-8-friendly `setw`  manipulator. Another is for reading UTF-8 string on Windows.
 
+![Demo Picture](.github/demo.png)
+
 ## Build & Usage
 
 The project is built using CMake and no external dependency is required. Just simply configure and build the CMake project to get  library files.

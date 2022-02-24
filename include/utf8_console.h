@@ -8,6 +8,7 @@
 ///
 /// Current this only affects Windows system, setting console
 /// code page and replacing streambuf of cin to support UTF-8.
+/// <b>Note: legacy streams like `scanf` and `stdin` is not affected!!</b>
 /// </summary>
 void initialize_utf8_console();
 

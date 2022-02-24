@@ -1,0 +1,6 @@
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the C:\Users\charlie\source\repos\CSLabProject codebase based on best match to current usage at 2021/9/25
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+[*.{cpp,c,h,hpp,cc,hh,txt,cmake}]
+end_of_line = lf
+charset = utf-8

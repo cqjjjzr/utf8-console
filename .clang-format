@@ -1,0 +1,30 @@
+---
+Language:        Cpp
+BasedOnStyle:  Google
+IndentWidth:     4
+PointerAlignment: Left
+AccessModifierOffset: -4
+BreakBeforeBraces: Allman
+
+SortIncludes: false
+ColumnLimit:     0
+ReflowComments:  false
+BinPackArguments: true
+BreakStringLiterals: false
+BreakBeforeBinaryOperators: NonAssignment
+
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+
+IndentCaseLabels: false
+NamespaceIndentation: None
+
+AlignTrailingComments: true
+AlignOperands: true
+AlignAfterOpenBracket: true
+...
+

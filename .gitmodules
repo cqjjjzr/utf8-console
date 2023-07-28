@@ -1,0 +1,3 @@
+[submodule "include_head_only/utfcpp"]
+	path = include_head_only/utfcpp
+	url = https://github.com/nemtrif/utfcpp.git

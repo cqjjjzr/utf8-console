@@ -1,8 +1,22 @@
-#ifndef UTF8_CONSOLE
-#define UTF8_CONSOLE
+#ifndef UTF8_CONSOLE_HPP
 
-#include <iomanip>
-#include <string_view>
+  #include <stdbool.h>
+  #include <stdlib.h>
+  #include <utfcpp/source/utf8.h>
+
+  #include <iomanip>
+  #include <iostream>
+  #include <string_view>
+
+  #ifdef WIN32
+    #include <Windows.h>
+
+    #include <streambuf>
+  #endif
+
+namespace utf8_console {
+  #ifndef UTF8_CONSOLE
+    #define UTF8_CONSOLE
 
 /// <summary>
 /// Initialize UTF-8 reading/writing in console.
@@ -11,34 +25,34 @@
 /// code page and replacing streambuf of cin to support UTF-8.
 /// <b>Note: legacy streams like `scanf` and `stdin` is not affected!!</b>
 /// </summary>
-void initialize_utf8_console();
+static inline void initialize_utf8_console();
 
 /// <summary>
 /// Get display width of the specified [str] on console.
 /// i.e. UTF-8 version of the POSIX wcswidth function.
 /// Using width of a half-width latin letter as the unit.
 /// </summary>
-size_t utf8_cswidth(std::string_view str);
+static inline size_t utf8_cswidth(std::string_view str);
 
 /// <summary>
 /// setw I/O stream manipulator replacement for UTF-8 string,
 /// will handle character width properly (hopefully).
 /// </summary>
-decltype(std::setw(0)) setw_u8(int w, std::string_view u8s);
+static inline decltype(std::setw(0)) setw_u8(int w, std::string_view u8s);
 
-#ifdef WIN32
-void initialize_utf8_console_windows();
-#endif
+    #ifdef WIN32
+static inline void initialize_utf8_console_windows();
+    #endif
 
-void initialize_utf8_console() {
-#ifdef WIN32
+static inline void initialize_utf8_console() {
+    #ifdef WIN32
   initialize_utf8_console_windows();
-#endif
+    #endif
 }
-#endif
+  #endif
 
-#ifndef UTF8_CONSOLE_WCWIDTH
-#define UTF8_CONSOLE_WCWIDTH
+  #ifndef UTF8_CONSOLE_WCWIDTH
+    #define UTF8_CONSOLE_WCWIDTH
 /*
  * Copyright (C) Fredrik Fornwall 2016.
  * Distributed under the MIT License.
@@ -56,9 +70,6 @@ void initialize_utf8_console() {
  * https://github.com/termux/termux-packages/tree/master/libandroid-support
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-
 struct width_interval {
   int start;
   int end;
@@ -66,7 +77,7 @@ struct width_interval {
 
 // From https://github.com/jquast/wcwidth/blob/master/wcwidth/table_zero.py
 // at commit b29897e5a1b403a0e36f7fc991614981cbc42475 (2020-07-14):
-static struct width_interval ZERO_WIDTH[] = {
+static const struct width_interval ZERO_WIDTH[] = {
     {0x00300, 0x0036f},  // Combining Grave Accent  ..Combining Latin Small Le
     {0x00483, 0x00489},  // Combining Cyrillic Titlo..Combining Cyrillic Milli
     {0x00591, 0x005bd},  // Hebrew Accent Etnahta   ..Hebrew Point Meteg
@@ -395,7 +406,7 @@ static struct width_interval ZERO_WIDTH[] = {
 
 // https://github.com/jquast/wcwidth/blob/master/wcwidth/table_wide.py
 // at commit b29897e5a1b403a0e36f7fc991614981cbc42475 (2020-07-14):
-static struct width_interval WIDE_EASTASIAN[] = {
+static const struct width_interval WIDE_EASTASIAN[] = {
     {0x01100, 0x0115f},  // Hangul Choseong Kiyeok  ..Hangul Choseong Filler
     {0x0231a, 0x0231b},  // Watch                   ..Hourglass
     {0x02329, 0x0232a},  // Left-pointing Angle Brac..Right-pointing Angle Bra
@@ -514,7 +525,9 @@ static struct width_interval WIDE_EASTASIAN[] = {
     {0x30000, 0x3fffd},  // (nil)                   ..(nil)
 };
 
-static bool intable(struct width_interval* table, int table_length, int c) {
+static inline bool intable(const struct width_interval* table,
+                           int table_length,
+                           int c) {
   // First quick check for Latin1 etc. characters.
   if (c < table[0].start)
     return false;
@@ -537,7 +550,7 @@ static bool intable(struct width_interval* table, int table_length, int c) {
 
 // CHARLIEJIANG MODIFICATION: wchar_t -> int for Windows compability
 // CHARLIEJIANG MODIFICATION: function name changed
-int u8c_wcwidth(int ucs) {
+static inline int u8c_wcwidth(int ucs) {
   // NOTE: created by hand, there isn't anything identifiable other than
   // general Cf category code to identify these, and some characters in Cf
   // category code are of non-zero width.
@@ -561,17 +574,10 @@ int u8c_wcwidth(int ucs) {
              ? 2
              : 1;
 }
-#endif
+  #endif
 
-#ifndef UTF8_CONSOLE_WIDTH
-#define UTF8_CONSOLE_WIDTH
-
-#include <utfcpp/source/utf8.h>
-
-#include <iomanip>
-#include <string_view>
-
-int u8c_wcwidth(int ucs);
+  #ifndef UTF8_CONSOLE_WIDTH
+    #define UTF8_CONSOLE_WIDTH
 
 class wcswidth_iterator {
  private:
@@ -593,33 +599,28 @@ class wcswidth_iterator {
   wcswidth_iterator& operator++(int) { return *this; }
 };
 
-size_t utf8_cswidth(std::string_view str) {
+static inline size_t utf8_cswidth(std::string_view str) {
   return utf8::utf8to32(str.begin(), str.end(), wcswidth_iterator()).result();
 }
 
-decltype(std::setw(0)) setw_u8(int w, std::string_view u8s) {
+static inline decltype(std::setw(0)) setw_u8(int w, std::string_view u8s) {
   return std::setw(w + u8s.length() - utf8_cswidth(u8s));
 }
-#endif
+  #endif
 
-#ifndef UTF8_CONSOLE_CIN_WIN
-#define UTF8_CONSOLE_CIN_WIN
+  #ifndef UTF8_CONSOLE_CIN_WIN
+    #define UTF8_CONSOLE_CIN_WIN
 
-#include <iostream>
-#ifdef WIN32
-  #include <Windows.h>
-
-  #include <streambuf>
-
-constexpr unsigned default_win_utf8_cin_buf_size = 2048;
+    #ifdef WIN32
 
 class win_utf8_streambuf : public std::streambuf {
  public:
-  win_utf8_streambuf(unsigned read_buf_size = default_win_utf8_cin_buf_size,
-                     bool handle_console_eof = false);
+  inline win_utf8_streambuf(
+      unsigned read_buf_size = 2048,  // default_win_utf8_cin_buf_size
+      bool handle_console_eof = false);
 
  protected:
-  int_type underflow() override;
+  inline int_type underflow() override;
 
  private:
   unsigned _read_buf_size, _u8_buf_size, _wide_buf_size;
@@ -629,8 +630,8 @@ class win_utf8_streambuf : public std::streambuf {
   bool _handle_eof, _eof = false;
 };
 
-win_utf8_streambuf::win_utf8_streambuf(unsigned read_buf_size,
-                                       bool handle_console_eof)
+inline win_utf8_streambuf::win_utf8_streambuf(unsigned read_buf_size,
+                                              bool handle_console_eof)
     : _read_buf_size(read_buf_size),
       _u8_buf_size(read_buf_size * 6),
       _wide_buf_size(read_buf_size * 2),
@@ -638,7 +639,7 @@ win_utf8_streambuf::win_utf8_streambuf(unsigned read_buf_size,
       _wide_buffer(std::unique_ptr<wchar_t[]>(new wchar_t[read_buf_size * 2])),
       _handle_eof(handle_console_eof) {}
 
-std::streambuf::int_type win_utf8_streambuf::underflow() {
+inline std::streambuf::int_type win_utf8_streambuf::underflow() {
   if (_eof) {
     setg(nullptr, nullptr, nullptr);
     return traits_type::eof();
@@ -682,11 +683,8 @@ std::streambuf::int_type win_utf8_streambuf::underflow() {
   return traits_type::to_int_type(*this->gptr());
 }
 
-namespace {
-std::unique_ptr<win_utf8_streambuf> global_win_utf8_streambuf;
-}
-
-void initialize_utf8_console_windows() {
+static inline void initialize_utf8_console_windows() {
+  std::unique_ptr<win_utf8_streambuf> global_win_utf8_streambuf;
   SetConsoleOutputCP(65001);
   SetConsoleCP(65001);
 
@@ -696,6 +694,8 @@ void initialize_utf8_console_windows() {
   std::cin.rdbuf(global_win_utf8_streambuf.get());
 }
 
-#endif
+    #endif
 
+  #endif
+}  // namespace utf8_console
 #endif

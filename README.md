@@ -6,6 +6,10 @@ Current this library has two components: one tool to properly handle display wid
 
 ![Demo Picture](.github/demo.png)
 
+## Usage (header-only)
+
+Grab a copy of `include_header_only/utf8_console` and `include_header_only/utfcpp`. 
+
 ## Build & Usage
 
 The project is built using CMake and no external dependency is required. Just simply configure and build the CMake project to get  library files.
